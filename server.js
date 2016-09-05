@@ -1,6 +1,12 @@
+var bodyParser = require('body-parser');
 var express = require('express');
 var app = express();
 var PORT = process.env.PORT || 3000;
+
+var todo = [];
+var todoNextId = 1;
+
+app.use(bodyParser.json());
 
 var todos = [{
     id: 1,
@@ -15,6 +21,10 @@ var todos = [{
     description: "Go on a walk",
     completed: true
 }];
+
+app.get('/', function(request, response){
+    response.send('ToDo API Root');
+});
 
 //REQUESTS
 //GET /todos - fetch all
@@ -40,11 +50,19 @@ app.get('/todos/:id', function(request,response){
     }
 });
 
-
-app.get('/', function(request, response){
-    response.send('ToDo API Root');
+//POST
+app.post('/todos', function(request,response){
+    var body = request.body;
+    
+    body.id = todoNextId++;
+    todos.push(body);
+    
+    response.json(body);
 });
+
 
 app.listen(PORT, function(){
     console.log('Express listening on port ' + PORT + '!');
 });
+
+
